@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pipes diy</title>
+</head>
+<body>
+    <ez-app><img src="wait.gif"></ez-app>
+    <script type="text/javascript" src="js/angular2.beta.stack.min.js"></script>
+    <script type="text/typescript">
+        import {Component,Pipe} from "angular2/core";
+        import {bootstrap} from "angular2/platform/browser";
+
+        @Pipe({
+            name : "countdown",
+            pure : false
+        })
+        class EzCountdown{
+            transform(input){
+                this.initOnce(input);
+                return this.counter;
+            }
+            initOnce(input){
+                if(this.initialized) return;
+                this.initialized = true;
+                var self =this;
+                self.counter = input;
+                self.timer = setInterval(_ => {
+                    self.counter--;
+                    if(self.counter===0) 
+                        clearInterval(self.timer);
+                },1000);
+            }
+        }
+
+
+        @Component({
+            selector:"ez-app",
+            template:`<h1>有状态管道 : {{ 100 | countdown }}</h1>`,
+            pipes : [EzCountdown]
+        })
+        class EzApp{}
+
+        bootstrap(EzApp);
+    </script>
+</body>
+</html>

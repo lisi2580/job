@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pipes diy</title>
+</head>
+<body>
+    <ez-app><img src="wait.gif"></ez-app>
+    <script type="text/javascript" src="js/angular2.beta.stack.min.js"></script>
+    <script type="text/typescript">
+        import {Component,Pipe} from "angular2/core";
+        import {bootstrap} from "angular2/platform/browser";
+
+        @Pipe({name:"reverse"})
+        class ReversePipe{
+            transform(input,args){
+                return input.split('').reverse().join('');
+            }
+        }
+
+        @Component({
+            selector:"ez-app",
+            template:`  
+                <h1>管道/Pipe</h1>
+                <p>{{text | reverse}}</p>
+            `,
+            pipes : [ReversePipe]
+        })
+        class EzApp{
+            constructor(){
+                this.text = "what a wonderful world!";
+            }
+        }
+                
+        bootstrap(EzApp);
+    </script>
+</body>
+</html>
