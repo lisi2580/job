@@ -1,0 +1,229 @@
+<!-- htmlcs-disable tag-pair -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>BiddingOS V3.0</title>
+    <!--STYLE_PLACEHOLDER-->
+    <script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+    <!--SCRIPT_PLACEHOLDER-->
+</head>
+<body>
+<style type="text/css">
+.ct-category-list-container {height: 300px; width: 120px; border: 1px dotted #ccc; position: relative;}
+.ct-category-list-wrapper {list-style: none; width: 100%; height: 100%; position: absolute; margin: 0; padding: 0; overflow: auto;}
+.ct-child-container {position: absolute; top: -1px; left:120px; border-left: none; display: none;}
+.ct-category-list-container li {cursor: pointer; float: left; width: 100%;}
+.ct-category-list-container li.active {color:red;}
+.ct-child-wrapper {list-style: none; width: 100%; height: 100%; position: absolute; margin: 0; padding: 0; color:#000; overflow: auto;}
+</style>
+<div id="category-list">
+</div>
+<script type="text/javascript">
+var categoryList = {
+    1001: {
+        name: '应用',
+        child: {
+            2001: {
+                name: '社交通讯',
+                child: {
+                    3001: {name: 'QQ'},
+                    3002: {name: '微信'},
+                    3003: {name: '陌陌'},
+                    3004: {name: '脉脉'},
+                    3005: {name: '钉钉'}
+                }
+            },
+            2002: {
+                name: '金融理财',
+                child: {
+                    3006: {name: '中国银行'},
+                    3007: {name: '建设银行'},
+                    3008: {name: '工商银行'},
+                    3009: {name: '招商银行'},
+                    3010: {name: '宁波银行'},
+                    3011: {name: '江苏银行'}
+                }
+            },
+            2003: {
+                name: '网购',
+                child: {
+                    3012: {name: '淘宝'},
+                    3013: {name: '天猫'},
+                    3014: {name: '京东'},
+                    3015: {name: '易迅'},
+                    3016: {name: '一号店'},
+                    3017: {name: '苏宁'},
+                    3018: {name: '聚划算'}
+                }
+            }
+        }
+    },
+    1002: {
+        name: '游戏',
+        child: {
+            2004: {
+                name: '射击',
+                child: {
+                    3020: {name: '穿越火线'},
+                    3021: {name: 'CS'},
+                    3022: {name: '枪王之王'},
+                    3023: {name: '逆战'},
+                    3024: {name: '穿越火线2'}
+                }
+            },
+            2005: {
+                name: '棋牌',
+                child: {
+                    3025: {name: '斗地主'},
+                    3026: {name: '炸金花'},
+                    3027: {name: '斗牛'},
+                    3028: {name: '德州扑克'},
+                    3028: {name: '拖拉机'},
+                    3030: {name: '三国杀'}
+                }
+            },
+            2006: {
+                name: '角色扮演',
+                child: {
+                    3031: {name: '英雄联盟'},
+                    3032: {name: '魔兽世界'},
+                    3033: {name: '完美世界'},
+                    3034: {name: '诛仙'},
+                    3035: {name: '剑灵'},
+                    3036: {name: '冒险岛'},
+                    3037: {name: '炉石传说'}
+                }
+            },
+        }
+    }
+};
+
+(function ($) {
+    $.fn.categoryList = function (option, arr) {
+
+        var categoryList = {};
+        var _this = this;
+        if (option === 'select') {
+            if ($.isArray(arr)) {
+                selectItem(arr)
+            }
+            return;
+        }
+        if (option) {
+            categoryList = option;
+        }
+
+        function selectItem(arr) {
+            for (var i = 0; i < arr.length; i++) {
+                var $ele = _this.find('input[value="' + arr[i] + '"]');
+                if (!$ele.is(':checked')) {
+                    $ele.trigger('click');
+                }
+            }
+        }
+
+        function createHtml(categoryList) {
+            var html = '<div class="ct-category-list-container"><ul class="ct-category-list-wrapper">';
+            var hasChild = '0';
+            var divHtml = '';
+            for (var key in categoryList) {
+                if (categoryList.hasOwnProperty(key)) {
+                    hasChild = categoryList[key].child ? '1' : '0';
+                    html += '<li data-type="category-cell" data-value="' + key + '" data-children="' + hasChild + '">'
+                    + '<input type="checkbox" value="' + key + '" data-children="' + hasChild + '">'
+                    + '<span>' + categoryList[key].name + '</span>'
+                    + '</li>';
+                    divHtml += (hasChild === '1' ? createChildHtml(categoryList[key].child, key) : '');
+                }
+            }
+            html += '</ul>' + divHtml + '</div>';
+            return html;
+        }
+
+        function createChildHtml(child, parentId) {
+            var html = '<div class="ct-child-container ct-category-list-container" data-type="child-list" data-parent="' + parentId + '"><ul class="ct-child-wrapper">';
+            var hasChild = '0';
+            var divHtml = '';
+            for (var key in child) {
+                if (child.hasOwnProperty(key)) {
+                    hasChild = child[key].child ? '1' : '0';
+                    html += '<li data-type="category-cell" data-value="' + key + '" data-children="' + hasChild + '">'
+                    + '<input type="checkbox" value="' + key + '" data-children="' + hasChild + '" data-parent="' + parentId + '">'
+                    + '<span>' + child[key].name + '</span>'
+                    + '</li>';
+                    divHtml += (hasChild === '1' ? createChildHtml(child[key].child, key) : '');
+                }
+
+            }
+            html += '</ul>' + divHtml + '</div>';
+            return html;
+        }
+
+        function freshParent($ele) {
+            var $wrapper = $ele.parent().parent().parent();
+            var checked = $wrapper.find('li input[type="checkbox"]:checked');
+            var box = $wrapper.find('li input[type="checkbox"]');
+            var $parentBox = _this.find('input[type="checkbox"][value="' + $ele.attr('data-parent') + '"]');
+            if (checked.length === 0) {
+                $parentBox.prop('indeterminate', false);
+                $parentBox.prop('checked', false);
+            }
+            else if (checked.length === box.length) {
+                $parentBox.prop('indeterminate', false);
+                $parentBox.prop('checked', true);
+            }
+            else {
+                $parentBox.prop('indeterminate', true);
+            }
+            if ($parentBox.attr('data-parent') !== undefined) {
+                freshParent($parentBox);
+            }
+        }
+
+        this.on('click', 'li[data-type="category-cell"]', function () {
+            var $this = $(this);
+            var $ele = $this.parent().parent();
+            $this.addClass('active').siblings().removeClass('active');
+            $ele.find('[data-type="child-list"]').hide();
+            _this.find('[data-type="child-list"][data-parent="' + $this.attr('data-value') + '"]').show();
+        });
+
+        this.on('click', 'input[type="checkbox"]', function () {
+            var $this = $(this);
+            var $ele = $this.parents().parent().parent();
+            if ($this.attr('data-children') === '1') {
+                var $eles = $ele.find('[data-type="child-list"][data-parent="' + $this.val() + '"]').find('ul li input[type="checkbox"]');
+                if ($this.is(':checked')) {
+                    $eles.prop('checked', true);
+                }
+                else {
+                    $eles.prop('checked', false);
+                }
+            }
+
+            if ($this.attr('data-parent') !== undefined) {
+                _this.find('li[data-type="category-cell"][data-value="' + $this.attr('data-parent') + '"]').trigger('click');
+                freshParent($this);
+            }
+
+            var value = [];
+            _this.find('input[type="checkbox"]:checked').each(function () {
+                if (!$(this).prop('indeterminate')) {
+                    value.push($(this).val());
+                }
+            });
+            value = value.join(',');
+            _this.data('value', value);
+            _this.find('input[name="category"]').val(value);
+        });
+
+        this.html(createHtml(categoryList));
+    }
+
+    $('#category-list').categoryList(categoryList);
+    $('#category-list').categoryList('select', [2006, 3031, 3020, 3037]);
+})(jQuery);
+</script>
+</body>
+</html>
