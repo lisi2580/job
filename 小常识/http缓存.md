@@ -26,6 +26,8 @@
 
 ![](https://github.com/lisi2580/job/blob/master/%E5%B0%8F%E5%B8%B8%E8%AF%86/images/015343_psx2_568818.png)
 
+
+
 浏览器再次请求时：
 ![](https://github.com/lisi2580/job/blob/master/%E5%B0%8F%E5%B8%B8%E8%AF%86/images/015353_P04w_568818.png)
 
