@@ -5,6 +5,14 @@
  */
 
 var Helper = {
+    // 判断null
+    isNull: function (n) {
+        return n === null;
+    }
+    // 判断数组
+    isArray: function (arr) {
+        return Object.prototype.toString.call(arr) === '[object Array]';
+    },
     // 深度拷贝
     deepClone: function () {
         var source = arguments[0] ? arguments[0] : {}, target, copy, tmp, key, clone;
@@ -68,7 +76,7 @@ var Helper = {
         }
 
         xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState==4){
+            if (xmlhttp.readyState == 4) {
                 if (xmlhttp.status == 200) {
                     var result;
                     if (options.dataType === 'xml') {
